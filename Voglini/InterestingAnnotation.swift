@@ -34,8 +34,8 @@ class InterestingAnnotations: NSObject {
     
     override init(){
         //build an array of pizza loactions literally
-        pois = [InterestingAnnotation(37.98038, 23.72399, title: "Telis", subtitle:"Mprizolakia", type: .food)]
-        pois += [InterestingAnnotation(37.9751, 23.7337, title: "Beer", subtitle:"Beer for all", type: .drink)]
-        pois += [InterestingAnnotation(37.97586, 23.72851, title: "Escape room", subtitle:"Mind? Game", type: .game)]
+        pois = [InterestingAnnotation(39.620759, 19.915563, title: "Eisodos aulis", subtitle:"spot 1", type: .game)]
+        pois += [InterestingAnnotation(39.620964, 19.915672, title: "Dromos", subtitle:"spot 2", type: .game)]
+        pois += [InterestingAnnotation(39.620679, 19.915144, title: "Kentro aulis", subtitle:"spot 3", type: .game)]
     }
 }

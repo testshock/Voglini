@@ -9,6 +9,8 @@
 import UIKit
 import MapKit
 import CoreLocation
+import AVFoundation
+
 
 class ViewController: UIViewController, MKMapViewDelegate,CLLocationManagerDelegate {
     @IBOutlet weak var headingLabel: UILabel!
@@ -25,6 +27,7 @@ class ViewController: UIViewController, MKMapViewDelegate,CLLocationManagerDeleg
     var currentLocation: CLLocationCoordinate2D!
     
     let initialAnnotations = InterestingAnnotations()
+    var onceinalifetaime = 0
     
     //For test purposes lets say that we only need 2 POIs
     let maxPOIcount = 2;
@@ -33,10 +36,32 @@ class ViewController: UIViewController, MKMapViewDelegate,CLLocationManagerDeleg
 
     var touchedPOI: MKAnnotation?
     
-    var angleToTargetInDegrees: Double
+    var angleToTargetInDegrees: Double = 0.0
+    
+
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+       /*
+        let path = Bundle.main.path(forResource: "beep.wav", ofType: nil)!
+        let url = URL(fileURLWithPath: path)
+        
+        do {
+            //create your audioPlayer in your parent class as a property
+            let audioPlayer = try AVFoundation.AVAudioPlayer(contentsOf: url)
+            audioPlayer.play()
+        } catch {
+            print("couldn't load the file")
+        }
+        */
+        if (CLLocationManager.headingAvailable()) {
+            locationManager.headingFilter = 5;
+            locationManager.startUpdatingHeading();
+            print ("heading available")
+        }
+        
         
         setupMap()
         showPOIs()
@@ -51,21 +76,46 @@ class ViewController: UIViewController, MKMapViewDelegate,CLLocationManagerDeleg
     /*
     
     */
+    
+    func degreesToRadians(degrees: Double) -> Double { return degrees * .pi / 180.0 }
+    func radiansToDegrees(radians: Double) -> Double { return radians * 180.0 / .pi }
+    
+    func getBearingBetweenTwoPoints1(point1 : CLLocationCoordinate2D, point2 : CLLocationCoordinate2D) -> Double {
+        
+        let lat1 = degreesToRadians(degrees: point1.latitude)
+        let lon1 = degreesToRadians(degrees: point1.longitude)
+        
+        let lat2 = degreesToRadians(degrees: point2.latitude)
+        let lon2 = degreesToRadians(degrees: point2.longitude)
+        
+        let dLon = lon2 - lon1
+        
+        let y = sin(dLon) * cos(lat2)
+        let x = cos(lat1) * sin(lat2) - sin(lat1) * cos(lat2) * cos(dLon)
+        let radiansBearing = atan2(y, x)
+        
+        return radiansToDegrees(radians: radiansBearing)
+    }
+    
+    
     func showTargetHeading(){
         if touchedPOI == nil {
             return
         }
-        let deltaY = (touchedPOI?.coordinate.longitude)! - currentLocation.longitude;
-        let deltaX = (touchedPOI?.coordinate.latitude)! - currentLocation.latitude;
-        self.angleToTargetInDegrees = atan(deltaY / deltaX) * 180 / Double.pi
         
-        targetHeadingLabel.text = "TH:\(angleToTargetInDegrees)"
+        //let deltaY = (touchedPOI?.coordinate.longitude)! - currentLocation.longitude;
+        //let deltaX = (touchedPOI?.coordinate.latitude)! - currentLocation.latitude;
+        //self.angleToTargetInDegrees = atan(deltaY / deltaX) * 180 / Double.pi
+        self.angleToTargetInDegrees = getBearingBetweenTwoPoints1(point1: currentLocation, point2: touchedPOI!.coordinate )
+        
+        
+        targetHeadingLabel.text = "TH:\(self.angleToTargetInDegrees)"
     }
     
     /* Get the heading of the device.
      */
     func showHeading(){
-        let angleNorth = locationManager.heading?.magneticHeading.degreesToRadians
+        let angleNorth = locationManager.heading?.magneticHeading
         self.headingLabel.text = "Heading:\(angleNorth ?? 0)"
     }
 
@@ -158,7 +208,10 @@ class ViewController: UIViewController, MKMapViewDelegate,CLLocationManagerDeleg
         self.currentLocation = CLLocationCoordinate2DMake(location.coordinate.latitude, location.coordinate.longitude)
         let region:MKCoordinateRegion = MKCoordinateRegion(center: self.currentLocation, span: span)
         
-        mapView.setRegion(region, animated: true)
+        if onceinalifetaime == 0{
+            mapView.setRegion(region, animated: true)
+            onceinalifetaime = 1
+        }
         
         self.mapView.showsUserLocation = true
         
@@ -198,10 +251,12 @@ class ViewController: UIViewController, MKMapViewDelegate,CLLocationManagerDeleg
     
     func locationManager(_ manager: CLLocationManager, didUpdateHeading newHeading: CLHeading) {
         if newHeading.headingAccuracy < 0 { return }
+        drawLineToPOI()
+
         updateHUD()
         UIView.animate(withDuration: 0.5) {
             let angle = newHeading.trueHeading.degreesToRadians //trueHeading.toRadians // convert from degrees to radians
-            self.mapView.transform = CGAffineTransform(rotationAngle: CGFloat(angle)) // rotate the picture
+            //self.mapView.transform = CGAffineTransform(rotationAngle: CGFloat(angle)) // rotate the picture
             self.headingLabel.text = String(format:"%f", angle)
         }
     }
@@ -223,6 +278,10 @@ class ViewController: UIViewController, MKMapViewDelegate,CLLocationManagerDeleg
         //delete old line before draw new
         if self.distLine != nil {
             mapView.removeOverlay(distLine)
+        }
+        
+        if touchedPOI == nil {
+            return
         }
         
         //Create points for the line

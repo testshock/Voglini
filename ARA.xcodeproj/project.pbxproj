@@ -22,6 +22,7 @@
 		95EC864F20172AA200476A78 /* SceneKit Scene.scn in Resources */ = {isa = PBXBuildFile; fileRef = 95EC864E20172AA200476A78 /* SceneKit Scene.scn */; };
 		95EC865120172AD300476A78 /* MyActions.sks in Resources */ = {isa = PBXBuildFile; fileRef = 95EC865020172AD300476A78 /* MyActions.sks */; };
 		95F0419021762E6B00B35154 /* CLLocationCoordinate2D+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F0418F21762E6B00B35154 /* CLLocationCoordinate2D+Extension.swift */; };
+		ED5976FD21A56D4B001D26C5 /* sounds in Resources */ = {isa = PBXBuildFile; fileRef = ED5976FC21A56D4B001D26C5 /* sounds */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -63,6 +64,7 @@
 		95EC864E20172AA200476A78 /* SceneKit Scene.scn */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = "SceneKit Scene.scn"; sourceTree = "<group>"; };
 		95EC865020172AD300476A78 /* MyActions.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = MyActions.sks; sourceTree = "<group>"; };
 		95F0418F21762E6B00B35154 /* CLLocationCoordinate2D+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CLLocationCoordinate2D+Extension.swift"; sourceTree = "<group>"; };
+		ED5976FC21A56D4B001D26C5 /* sounds */ = {isa = PBXFileReference; lastKnownFileType = folder; path = sounds; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -119,6 +121,7 @@
 		95EC8618201728CD00476A78 /* Voglini */ = {
 			isa = PBXGroup;
 			children = (
+				ED5976FC21A56D4B001D26C5 /* sounds */,
 				95EC8619201728CD00476A78 /* AppDelegate.swift */,
 				95EC861B201728CD00476A78 /* ViewController.swift */,
 				95EC861D201728CD00476A78 /* Main.storyboard */,
@@ -131,6 +134,7 @@
 			);
 			path = Voglini;
 			sourceTree = "<group>";
+			usesTabs = 0;
 		};
 		95EC862D201728CD00476A78 /* VogliniTests */ = {
 			isa = PBXGroup;
@@ -222,7 +226,7 @@
 			attributes = {
 				LastSwiftUpdateCheck = 0920;
 				LastUpgradeCheck = 1000;
-				ORGANIZATIONNAME = "Antonios Mavrelos";
+				ORGANIZATIONNAME = "Costas Voglis";
 				TargetAttributes = {
 					95EC8615201728CD00476A78 = {
 						CreatedOnToolsVersion = 9.2;
@@ -248,7 +252,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 95EC8611201728CD00476A78 /* Build configuration list for PBXProject "Voglini" */;
+			buildConfigurationList = 95EC8611201728CD00476A78 /* Build configuration list for PBXProject "ARA" */;
 			compatibilityVersion = "Xcode 8.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -275,6 +279,7 @@
 			files = (
 				95EC8624201728CD00476A78 /* LaunchScreen.storyboard in Resources */,
 				95EC864C20172A8700476A78 /* spark.png in Resources */,
+				ED5976FD21A56D4B001D26C5 /* sounds in Resources */,
 				95EC865120172AD300476A78 /* MyActions.sks in Resources */,
 				95EC864F20172AA200476A78 /* SceneKit Scene.scn in Resources */,
 				95EC8621201728CD00476A78 /* Assets.xcassets in Resources */,
@@ -479,10 +484,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 5CS6V7W342;
+				DEVELOPMENT_TEAM = 86SDT7KNNB;
 				INFOPLIST_FILE = Voglini/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.mavrelos.Voglini;
+				PRODUCT_BUNDLE_IDENTIFIER = com.avarts.ara;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -494,10 +499,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 5CS6V7W342;
+				DEVELOPMENT_TEAM = 86SDT7KNNB;
 				INFOPLIST_FILE = Voglini/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.mavrelos.Voglini;
+				PRODUCT_BUNDLE_IDENTIFIER = com.avarts.ara;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -573,7 +578,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		95EC8611201728CD00476A78 /* Build configuration list for PBXProject "Voglini" */ = {
+		95EC8611201728CD00476A78 /* Build configuration list for PBXProject "ARA" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				95EC863C201728CD00476A78 /* Debug */,
