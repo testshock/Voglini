@@ -10,17 +10,22 @@ import UIKit
 import MapKit
 import CoreLocation
 import AVFoundation
+import CoreMotion
 
-
-class ViewController: UIViewController, MKMapViewDelegate,CLLocationManagerDelegate {
+class ViewController: UIViewController, MKMapViewDelegate,CLLocationManagerDelegate, AVAudioPlayerDelegate {
+    @IBOutlet weak var accelLabel: UILabel!
+    @IBOutlet weak var gyroLabel: UILabel!
     @IBOutlet weak var headingLabel: UILabel!
     @IBOutlet weak var distanceLabel: UILabel!
     @IBOutlet weak var targetHeadingLabel: UILabel!
     @IBOutlet weak var mapView: MKMapView!
+    var audioPlayer: AVAudioPlayer!
 
+    var timer: Timer!
     var distLine: MKPolyline!
     var distLineView: MKPolylineView!
     
+    let motionManager = CMMotionManager()
     let locationManager = CLLocationManager()
     let regionRadius: CLLocationDistance = 1000
     
@@ -34,38 +39,84 @@ class ViewController: UIViewController, MKMapViewDelegate,CLLocationManagerDeleg
     
     let poiLocations: Set<CLLocation> = [CLLocation(latitude: 37.97534, longitude: 23.7363),CLLocation(latitude: 37.98407,longitude: 23.72802)];
 
-    var touchedPOI: MKAnnotation?
+    var touchedPOI: InterestingAnnotation?
     
     var angleToTargetInDegrees: Double = 0.0
     
 
-    
+  
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        initialAnnotations.setMapView(aMapView: self.mapView)
+
+
+        /*do {
+            if let fileURL = Bundle.main.path(forResource: "sounds/500Hz_dBFS", ofType: "wav") {
+                audioPlayer = try AVAudioPlayer(contentsOf: URL(fileURLWithPath: fileURL))
+                audioPlayer?.numberOfLoops = -1
+                audioPlayer?.play()
+                audioPlayer?.volume = 0.5
+                audioPlayer?.delegate = self
+            } else {
+                print("No file with specified name exists")
+            }
+        } catch let error {
+            print("Can't play the audio file failed with an error \(error.localizedDescription)")
+        }*/
+        //
+
+        GSAudio.sharedInstance.playSounds(soundFileNames: ["2000Hz_dBFS", "1000Hz_dBFS", "500Hz_dBFS"], startVolume: [0, 0.2, 0.1])
+
         
-       /*
-        let path = Bundle.main.path(forResource: "beep.wav", ofType: nil)!
-        let url = URL(fileURLWithPath: path)
         
-        do {
-            //create your audioPlayer in your parent class as a property
-            let audioPlayer = try AVFoundation.AVAudioPlayer(contentsOf: url)
-            audioPlayer.play()
-        } catch {
-            print("couldn't load the file")
-        }
-        */
         if (CLLocationManager.headingAvailable()) {
             locationManager.headingFilter = 5;
             locationManager.startUpdatingHeading();
             print ("heading available")
         }
         
+
+        
+        // Make sure the accelerometer hardware is available.
+        if motionManager.isAccelerometerAvailable {
+            motionManager.accelerometerUpdateInterval = 1.0 / 20.0  // 20 Hz
+            motionManager.gyroUpdateInterval = 1.0 / 20.0  // 20 Hz
+            motionManager.startAccelerometerUpdates()
+            if (motionManager.isGyroAvailable){
+                motionManager.startGyroUpdates()
+            }
+            // Configure a timer to fetch the data.
+            timer = Timer(fire: Date(), interval: (1.0/20.0),
+                        repeats: true, block: { (timer) in
+                    // Get the accelerometer data.
+                     if let data = self.motionManager.accelerometerData {
+                            let x = data.acceleration.x
+                            let y = data.acceleration.y
+                            let z = data.acceleration.z
+                                    
+                        self.accelLabel.text = String(format:"[%.2f %.2f %.2f] ", x, y, z )
+                    }
+                    if let data = self.motionManager.gyroData {
+                            let x = data.rotationRate.z
+                            let y = data.rotationRate.y
+                            let z = data.rotationRate.z
+                                
+                            self.gyroLabel.text = String(format:"[%.2f %.2f %.2f] ", x, y, z )
+                    }
+            })
+            
+            // Add the timer to the current run loop.
+            RunLoop.current.add(self.timer!, forMode: RunLoop.Mode.default)
+        }
+      
         
         setupMap()
         showPOIs()
         updateHUD()
+        
+
+        
     }
     
     func updateHUD(){
@@ -124,7 +175,7 @@ class ViewController: UIViewController, MKMapViewDelegate,CLLocationManagerDeleg
      */
     func showTargetDistance(){
         //Show hide distance label
-        print("\(distanceLabel.isHidden)")
+        //print("\(distanceLabel.isHidden)")
         if touchedPOI == nil {
             distanceLabel.isHidden = true
             targetHeadingLabel.isHidden = true
@@ -199,14 +250,17 @@ class ViewController: UIViewController, MKMapViewDelegate,CLLocationManagerDeleg
     
     }
     
+    
     //Delegate methods
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         //guard let locValue: CLLocationCoordinate2D = manager.location?.coordinate else { return }
-//        print("locations = \(locValue.latitude) \(locValue.longitude)")
+        //print("locations = \(locValue.latitude) \(locValue.longitude)")
         let location = locations[0]
         let span:MKCoordinateSpan = MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
         self.currentLocation = CLLocationCoordinate2DMake(location.coordinate.latitude, location.coordinate.longitude)
         let region:MKCoordinateRegion = MKCoordinateRegion(center: self.currentLocation, span: span)
+        
+        initialAnnotations.updateLoc(locValue: location)
         
         if onceinalifetaime == 0{
             mapView.setRegion(region, animated: true)
@@ -224,6 +278,7 @@ class ViewController: UIViewController, MKMapViewDelegate,CLLocationManagerDeleg
         guard let annotation = annotation as? InterestingAnnotation else {return nil}
         var identifier = ""
         var color = UIColor.red
+        annotation.subtitle = String(format:"%f", annotation.distance ?? 0)
         switch annotation.type{
         case .drink:
             identifier = "Drink"
@@ -251,7 +306,7 @@ class ViewController: UIViewController, MKMapViewDelegate,CLLocationManagerDeleg
     
     func locationManager(_ manager: CLLocationManager, didUpdateHeading newHeading: CLHeading) {
         if newHeading.headingAccuracy < 0 { return }
-        drawLineToPOI()
+        //drawLineToPOI()
 
         updateHUD()
         UIView.animate(withDuration: 0.5) {
@@ -263,8 +318,11 @@ class ViewController: UIViewController, MKMapViewDelegate,CLLocationManagerDeleg
     
     func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
         print("Selected view \(String(describing: view.annotation?.title ?? "Annotation with no title?"))")
-        touchedPOI = view.annotation
-        drawLineToPOI()
+        touchedPOI = (view.annotation as! InterestingAnnotation)
+    
+        initialAnnotations.deselectAll()
+        touchedPOI!.selected = true
+        //drawLineToPOI()
         updateHUD()
     }
     
@@ -274,7 +332,7 @@ class ViewController: UIViewController, MKMapViewDelegate,CLLocationManagerDeleg
      
      TODO: When user touches map (not POI) and there is a line drawn, remove it
     */
-    func drawLineToPOI(){
+    /*func drawLineToPOI(){
         //delete old line before draw new
         if self.distLine != nil {
             mapView.removeOverlay(distLine)
@@ -286,18 +344,19 @@ class ViewController: UIViewController, MKMapViewDelegate,CLLocationManagerDeleg
         
         //Create points for the line
         let lineVertices:[CLLocationCoordinate2D] = [(self.touchedPOI?.coordinate)! , (locationManager.location?.coordinate)!]
-        self.distLine = MKPolyline(coordinates:lineVertices, count: 2)
+        //self.distLine = Polyline(coordinates:lineVertices, count: 2)
 
         //Add an overlay, this will be drawn in renderFor
         mapView.addOverlay(distLine)
-    }
+    }*/
     
     func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
-        if let polyline = overlay as? MKPolyline {
+        if let polyline = overlay as? Polyline {
             let distLineRenderer = MKPolylineRenderer(polyline: polyline)
-            distLineRenderer.strokeColor = .cyan
+            distLineRenderer.strokeColor = polyline.color
             distLineRenderer.lineWidth = 3.0
             distLineRenderer.alpha = 0.7
+            distLineRenderer.lineDashPattern = [2, 7]
             return distLineRenderer
         }
         fatalError("Something wrong...Call Voglis to the rescue")

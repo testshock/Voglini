@@ -23,6 +23,8 @@
 		95EC865120172AD300476A78 /* MyActions.sks in Resources */ = {isa = PBXBuildFile; fileRef = 95EC865020172AD300476A78 /* MyActions.sks */; };
 		95F0419021762E6B00B35154 /* CLLocationCoordinate2D+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F0418F21762E6B00B35154 /* CLLocationCoordinate2D+Extension.swift */; };
 		ED5976FD21A56D4B001D26C5 /* sounds in Resources */ = {isa = PBXBuildFile; fileRef = ED5976FC21A56D4B001D26C5 /* sounds */; };
+		ED5976FF21C01930001D26C5 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ED5976FE21C01930001D26C5 /* AVFoundation.framework */; };
+		ED59773D21C12454001D26C5 /* GSAudio.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED59773C21C12454001D26C5 /* GSAudio.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -65,6 +67,8 @@
 		95EC865020172AD300476A78 /* MyActions.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = MyActions.sks; sourceTree = "<group>"; };
 		95F0418F21762E6B00B35154 /* CLLocationCoordinate2D+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CLLocationCoordinate2D+Extension.swift"; sourceTree = "<group>"; };
 		ED5976FC21A56D4B001D26C5 /* sounds */ = {isa = PBXFileReference; lastKnownFileType = folder; path = sounds; sourceTree = "<group>"; };
+		ED5976FE21C01930001D26C5 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		ED59773C21C12454001D26C5 /* GSAudio.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GSAudio.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -72,6 +76,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				ED5976FF21C01930001D26C5 /* AVFoundation.framework in Frameworks */,
 				95EC8649201728DC00476A78 /* MapKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -131,6 +136,7 @@
 				955BCEB6216F5D6B00BB78C5 /* InterestingAnnotation.swift */,
 				955BCEB8216F715A00BB78C5 /* Floating+Extension.swift */,
 				95F0418F21762E6B00B35154 /* CLLocationCoordinate2D+Extension.swift */,
+				ED59773C21C12454001D26C5 /* GSAudio.swift */,
 			);
 			path = Voglini;
 			sourceTree = "<group>";
@@ -157,6 +163,7 @@
 		95EC8647201728DC00476A78 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				ED5976FE21C01930001D26C5 /* AVFoundation.framework */,
 				95EC8648201728DC00476A78 /* MapKit.framework */,
 			);
 			name = Frameworks;
@@ -311,6 +318,7 @@
 			files = (
 				95EC861C201728CD00476A78 /* ViewController.swift in Sources */,
 				95EC861A201728CD00476A78 /* AppDelegate.swift in Sources */,
+				ED59773D21C12454001D26C5 /* GSAudio.swift in Sources */,
 				95F0419021762E6B00B35154 /* CLLocationCoordinate2D+Extension.swift in Sources */,
 				955BCEB9216F715A00BB78C5 /* Floating+Extension.swift in Sources */,
 				955BCEB7216F5D6B00BB78C5 /* InterestingAnnotation.swift in Sources */,
